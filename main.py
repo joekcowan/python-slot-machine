@@ -26,7 +26,7 @@ symbolValue = {
     "D": 2
 }
 
-# checks any winnings and returns them 
+# checks any winnings and returns the winning amount and the lines won 
 def checkWinnings(columns, lines, bet, values):
     winnings = 0
     winningLines = []
