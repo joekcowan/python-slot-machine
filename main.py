@@ -1,5 +1,10 @@
 import random
 
+# syntax notes:
+# _ is anon iterator
+# [:] makes a copy as opposed to a reference
+
+# set constants and globals
 MAX_LINES = 3
 MAX_BET = 100
 MIN_BET = 1
@@ -13,6 +18,59 @@ symbolCount = {
     "C": 6,
     "D": 8
 }
+
+symbolValue = {
+    "A": 5,
+    "B": 4,
+    "C": 3,
+    "D": 2
+}
+
+# 
+def checkWinnings(columns, lines, bet, values):
+    winnings = 0
+    winningLines = []
+    for line in range(lines):
+        symbol = columns[0][line]
+        for column in columns:
+            symbolToCheck = column[line]
+            if symbol != symbolToCheck:
+                break
+        else:
+            winnings += values[symbol] * bet
+            winningLines.append(line + 1)
+    return winnings, winningLines
+    
+# randomly selects "spin" results from symbols dict. aka symbolCount
+def getSlotMachineSpin(rows,cols,symbols):
+    allSymbols = []
+    for symbol, symbolCount in symbols.items():
+        for _ in range(symbolCount):
+            allSymbols.append(symbol)
+            
+    columns = []
+    for _ in range(cols):
+        column = []
+        currentSymbols = allSymbols[:]
+        for _ in range(rows): 
+            value = random.choice(currentSymbols)
+            currentSymbols.remove(value)
+            column.append(value)
+            
+        columns.append(column)
+    
+    return columns
+
+# makes columns more printable
+def printSlotMachine(columns):
+    for row in range(len(columns[0])):
+        for i, column in enumerate(columns):
+            if i != len(columns) - 1:
+                print(column[row], end=" | ")
+            else:
+                print(column[row], end="")
+                
+        print()
 
 # function for getting slot deposit
 def deposit():
@@ -56,9 +114,8 @@ def getBet():
             print("Please enter a number.")
     return amount
 
-# run the whole main program
-def main():
-    balance = deposit()
+# execute a spin and return wins
+def spin(balance):
     lines = getNumOfLines()
     
     # verify they have enough to bet 
@@ -72,4 +129,23 @@ def main():
         
     print(f"You are betting ${bet} on {lines} lines. Total bet is equal to ${totalBet}.")
     
+    slots = getSlotMachineSpin(ROWS, COLS, symbolCount)
+    printSlotMachine(slots)
+    winnings, winningsLines = checkWinnings(slots, lines, bet, symbolValue)
+    print(f"You won {winnings}.")
+    print(f"You won on line:", *winningsLines)
+    
+    return winnings - totalBet
+
+# run the whole main program
+def main():
+    balance = deposit()
+    while True:
+        print(f"Current balance is ${balance}")
+        answer = input("Press enter to play (q to quit).")
+        if answer == "q":
+            break
+        balance += spin(balance)
+        
+    print(f"You left with ${balance}")
 main()
