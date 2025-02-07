@@ -26,7 +26,7 @@ symbolValue = {
     "D": 2
 }
 
-# 
+# checks any winnings and returns them 
 def checkWinnings(columns, lines, bet, values):
     winnings = 0
     winningLines = []
@@ -100,7 +100,7 @@ def getNumOfLines():
             print("Please enter a number.")
     return lines
 
-# 
+# sets the bet for each spin
 def getBet():
     while True:
         amount = input("What would you like to bet on each line? $")
